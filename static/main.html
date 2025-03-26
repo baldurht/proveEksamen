@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beer Collection</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      #beer-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+      .beer-card {
+        border: 1px solid #ddd;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+      .beer-card:hover {
+        transform: scale(1.05);
+      }
+      .beer-card img {
+        max-width: 200px;
+        max-height: 300px;
+        object-fit: contain;
+        margin-bottom: 10px;
+      }
+      .beer-card h3 {
+        margin: 10px 0;
+        font-size: 1.2em;
+      }
+      .beer-card p {
+        color: #666;
+        margin: 5px 0;
+      }
+      .sort-buttons {
+        margin-bottom: 20px;
+      }
+      .sort-buttons button {
+        margin-right: 10px;
+        padding: 8px 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .sort-buttons button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Beer Collection</h1>
+    <div class="sort-buttons">
+      <button onclick="sortBeers('name')">Sort by Name</button>
+      <button onclick="sortBeers('rating')">Sort by Rating</button>
+      <button onclick="sortBeers('price')">Sort by Price</button>
+    </div>
+    <div id="error-message"></div>
+    <div id="beer-list"></div>
+
+    <script>
+      let currentBeers = []; // Store beers globally for sorting
+
+      function sortBeers(criteria) {
+        const sortedBeers = [...currentBeers].sort((a, b) => {
+          switch(criteria) {
+            case 'name':
+              return (a.name || '').localeCompare(b.name || '');
+            case 'rating':
+              const ratingA = a.rating?.average || 0;
+              const ratingB = b.rating?.average || 0;
+              return ratingB - ratingA;
+            case 'price':
+              const priceA = typeof a.price === 'string' ? parseFloat(a.price.replace(/[^0-9.]/g, '')) : 0;
+              const priceB = typeof b.price === 'string' ? parseFloat(b.price.replace(/[^0-9.]/g, '')) : 0;
+              return priceA - priceB;
+          }
+        });
+        displayBeers(sortedBeers);
+      }
+
+      function displayBeers(beers) {
+        const beerList = document.getElementById("beer-list");
+        beerList.innerHTML = "";
+
+        beers.forEach((beer) => {
+          const beerCard = document.createElement("div");
+          beerCard.classList.add("beer-card");
+
+          const beerImage = document.createElement("img");
+          beerImage.src = beer.image || "/static/beer-placeholder.png";
+          beerImage.alt = `${beer.name} beer image`;
+          beerImage.onerror = function () {
+            this.src = "/static/beer-placeholder.png";
+          };
+
+          beerCard.appendChild(beerImage);
+
+          const nameElement = document.createElement("h3");
+          nameElement.textContent = beer.name || "Unnamed Beer";
+
+          const priceElement = document.createElement("p");
+          priceElement.textContent = beer.price || "Price not available";
+          priceElement.style.fontWeight = "bold";
+
+          const ratingElement = document.createElement("p");
+          if (beer.rating && beer.rating.average) {
+            const averageRating = beer.rating.average.toFixed(1);
+            const reviews = beer.rating.reviews || 0;
+            ratingElement.textContent = `Rating: ${averageRating}/5 (${reviews} reviews)`;
+          } else {
+            ratingElement.textContent = "Rating not available";
+          }
+
+          beerCard.appendChild(nameElement);
+          beerCard.appendChild(priceElement);
+          beerCard.appendChild(ratingElement);
+
+          beerList.appendChild(beerCard);
+        });
+      }
+
+      async function fetchAndDisplayBeers() {
+        const errorMessage = document.getElementById("error-message");
+        const beerList = document.getElementById("beer-list");
+        errorMessage.textContent = "";
+        beerList.innerHTML = "";
+
+        try {
+          const response = await fetch("/get-beers");
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              window.location.href = "/";
+              return;
+            }
+            const errorData = await response.json();
+            errorMessage.textContent = errorData.detail || "An error occurred";
+            return;
+          }
+
+          currentBeers = await response.json();
+          displayBeers(currentBeers);
+        } catch (error) {
+          console.error("Error fetching beers:", error);
+          errorMessage.textContent = "Failed to fetch beers. Please try again.";
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', fetchAndDisplayBeers);
+    </script>
+  </body>
+</html>

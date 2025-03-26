@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      input {
+        margin: 10px 0;
+        padding: 10px;
+      }
+      button {
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      a {
+        text-align: center;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Login</h1>
+    <form action="/login" method="post">
+      <label for="username">Username:</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        aria-required="true"
+      />
+
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        aria-required="true"
+      />
+
+      <button type="submit">Login</button>
+    </form>
+    <a href="/signup">Create an account</a>
+  </body>
+</html>
