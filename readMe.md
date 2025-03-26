@@ -1,3 +1,6 @@
+I'll update the README to include the environment setup instructions. Here's the modified version of <mcfile name="readMe.md" path="/Users/baldur/repositories/eksamen/readMe.md"></mcfile>:
+
+```markdown:/Users/baldur/repositories/eksamen/readMe.md
 # Beer Collection Web Application
 
 A secure web application for browsing and sorting beer collections, built with FastAPI and JavaScript.
@@ -42,12 +45,34 @@ A secure web application for browsing and sorting beer collections, built with F
 git clone https://github.com/baldurht/proveEksamen
 ```
 
-2. Install dependencies:
+2. Create and activate virtual environment:
+```bash
+python -m venv env
+source env/bin/activate  # For MacOS/Linux
+```
+
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+4. Create a .env file in the root directory:
+```bash
+touch .env
+```
+
+5. Add the following configuration to your .env file:
+```plaintext
+# JWT Configuration
+SECRET_KEY="your_secret_key_here"
+ALGORITHM="HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Database Configuration
+DATABASE_URL="sqlite:///./users.db"
+```
+
+6. Run the application:
 ```bash
 uvicorn main:app --reload
 ```
@@ -75,6 +100,7 @@ uvicorn main:app --reload
 - HTTP-only cookies for token storage
 - Protected API endpoints
 - Input validation and sanitization
+- Environment variables for sensitive data
 
 ## Development
 
@@ -83,3 +109,29 @@ To start the development server with hot reload:
 ```bash
 uvicorn main:app --reload --port 8000
 ```
+
+## Environment Variables
+
+The application requires the following environment variables in the .env file:
+
+- `SECRET_KEY`: JWT secret key for token generation
+- `ALGORITHM`: JWT algorithm (default: "HS256")
+- `ACCESS_TOKEN_EXPIRE_MINUTES`: Token expiration time in minutes
+- `DATABASE_URL`: SQLite database URL
+
+Make sure to keep your .env file secure and never commit it to version control.
+
+## License
+
+[Your chosen license]
+
+## Contributing
+
+[Your contribution guidelines]
+```
+
+The updated README now includes:
+1. Virtual environment setup instructions
+2. .env file creation and configuration
+3. Detailed environment variables section
+4. Security note about keeping .env file secure
