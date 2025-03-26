@@ -135,3 +135,12 @@ The updated README now includes:
 2. .env file creation and configuration
 3. Detailed environment variables section
 4. Security note about keeping .env file secure
+
+
+
+
+
+
+
+
+
